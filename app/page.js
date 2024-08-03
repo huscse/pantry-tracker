@@ -5,9 +5,11 @@ import { firestore } from '@/firebase';
 import { Box, Button, Modal, Stack, TextField, Typography } from '@mui/material';
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from '@vercel/analytics/react';
 
-import Head from 'next/head';
+
+
+
 
 
 export default function Home() {
@@ -88,7 +90,7 @@ export default function Home() {
   };
 
   return (
-
+ 
     <Box
       width="100vw"
       height="100vh"
@@ -194,7 +196,7 @@ export default function Home() {
           </Stack>
         </Box>
       </Modal>
-
+      <Analytics />
       <Button
         variant="contained"
         color="primary"
