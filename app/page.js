@@ -1,4 +1,4 @@
-'use client'; // Add this line at the top of the file
+'use client';
 
 import { useState, useEffect } from 'react';
 import { firestore } from '@/firebase';
@@ -115,7 +115,7 @@ export default function Home() {
           needed.
         </Typography>
         <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-          Below is my Portfolio and LinkedIn, feel free to check and let's connect!
+          Below is my Portfolio and LinkedIn, feel free to check and let&apos;s connect!
         </Typography>
         <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
           <Link href="/" passHref>
