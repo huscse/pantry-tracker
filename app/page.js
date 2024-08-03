@@ -8,11 +8,6 @@ import Link from 'next/link';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 
-
-
-
-
-
 export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false);
@@ -129,7 +124,7 @@ export default function Home() {
           <Link href="/" passHref>
             <Button variant="outlined" color="primary">Home</Button>
           </Link>
-          <Link href="https://boiledpotatoe.github.io/landing-page/" passHref>
+          <Link href="https://husnain-landingpage.vercel.app" passHref>
             <Button variant="outlined" color="primary">Portfolio</Button>
           </Link>
           <Link href="https://www.linkedin.com/in/husnain-khaliq-5414b9277/" passHref>
