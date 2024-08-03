@@ -31,12 +31,13 @@ export default function Home() {
   const addItem = async (item) => {
     const docRef = doc(collection(firestore, 'pantry'), item);
     const docSnap = await getDoc(docRef);
+    const qty = parseInt(quantity);
 
     if (docSnap.exists()) {
       const { quantity } = docSnap.data();
-      await setDoc(docRef, { quantity: quantity + 1 });
+      await setDoc(docRef, { quantity: quantity + qty });
     } else {
-      await setDoc(docRef, { quantity: 1 });
+      await setDoc(docRef, { quantity: qty });
     }
     await updatePantry();
   };
@@ -74,6 +75,24 @@ export default function Home() {
     await updatePantry();
   };
 
+  const removeAllQuantities = async (item) => {
+    const docRef = doc(collection(firestore, 'pantry'), item);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      await deleteDoc(docRef);
+    }
+    await updatePantry();
+  };
+
+  const removeAllItems = async () => {
+    const snapshot = query(collection(firestore, 'pantry'));
+    const docs = await getDocs(snapshot);
+    const deletePromises = docs.docs.map((doc) => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+    await updatePantry();
+  };
+
   useEffect(() => {
     updatePantry();
   }, []);
@@ -86,7 +105,6 @@ export default function Home() {
   };
 
   return (
- 
     <Box
       width="100vw"
       height="100vh"
@@ -107,13 +125,14 @@ export default function Home() {
         boxShadow={4}
         p={4}
         mb={4}
+        sx={{ mb: { xs: 2, md: 4 }, p: { xs: 2, md: 4 } }}
       >
         <Typography variant="h4" color="#333" align="center" sx={{ fontWeight: 'bold', mb: 2 }}>
           Pantry Tracker
         </Typography>
         <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-          I created this Pantry Tracker app using Next.js, React, and Firebase to store the data. 
-          It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry. 
+          I created this Pantry Tracker app using Next.js, React, and Firebase to store the data.
+          It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry.
           With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer 
           needed.
         </Typography>
@@ -194,20 +213,36 @@ export default function Home() {
       </Modal>
       <Analytics />
       <SpeedInsights />
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleOpen}
-        sx={{
-          borderRadius: '12px',
-          mb: 2,
-          '&:hover': {
-            backgroundColor: '#0288d1',
-          },
-        }}
-      >
-        Add New Item
-      </Button>
+      <Box display="flex" justifyContent="center" alignItems="center" gap={2} mb={2}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleOpen}
+          sx={{
+            borderRadius: '12px',
+            mb: 2,
+            '&:hover': {
+              backgroundColor: '#0288d1',
+            },
+          }}
+        >
+          Add New Item
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={removeAllItems}
+          sx={{
+            borderRadius: '12px',
+            mb: 2,
+            '&:hover': {
+              backgroundColor: '#d32f2f',
+            },
+          }}
+        >
+          Remove All Items
+        </Button>
+      </Box>
 
       <Box
         width="100%"
@@ -219,6 +254,7 @@ export default function Home() {
         display="flex"
         flexDirection="column"
         alignItems="center"
+        sx={{ p: { xs: 2, md: 4 } }}
       >
         <Typography variant="h5" color="#333" align="center" sx={{ fontWeight: 'bold', mb: 2 }}>
           Pantry Items
@@ -242,6 +278,7 @@ export default function Home() {
                   transform: 'scale(1.02)',
                   boxShadow: 4,
                 },
+                mb: { xs: 1, md: 2 },
               }}
             >
               <Typography variant="h6" color="#333" flex={2}>
@@ -272,6 +309,14 @@ export default function Home() {
                 >
                   Remove
                 </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => removeAllQuantities(name)}
+                  sx={{ borderRadius: '8px' }}
+                >
+                  Remove All Quantities
+                </Button>
               </Stack>
             </Box>
           ))}
@@ -280,6 +325,10 @@ export default function Home() {
     </Box>
   );
 }
+
+
+
+
 
 
 
