@@ -7,6 +7,9 @@ import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'fire
 import Link from 'next/link';
 import { Analytics } from "@vercel/analytics/react"
 
+import Head from 'next/head';
+
+
 export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false);
@@ -85,6 +88,7 @@ export default function Home() {
   };
 
   return (
+
     <Box
       width="100vw"
       height="100vh"
