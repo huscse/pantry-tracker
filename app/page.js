@@ -6,6 +6,7 @@ import { Box, Button, Modal, Stack, TextField, Typography } from '@mui/material'
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 
 
@@ -197,6 +198,7 @@ export default function Home() {
         </Box>
       </Modal>
       <Analytics />
+      <SpeedInsights />
       <Button
         variant="contained"
         color="primary"
