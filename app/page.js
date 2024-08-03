@@ -1,88 +1,87 @@
-'use client'
-import { useEffect, useState } from "react";
-import { firestore } from "@/firebase";
-import { Box, Button, Modal, Stack, TextField, Typography } from "@mui/material";
-import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from "firebase/firestore";
+'use client'; // Add this line at the top of the file
+
+import { useState, useEffect } from 'react';
+import { firestore } from '@/firebase';
+import { Box, Button, Modal, Stack, TextField, Typography } from '@mui/material';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 
 export default function Home() {
-  const [pantry, setPantry] = useState([])
-  const [open, setOpen] = useState(false)
-  const [item, setItemName] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const [editingItem, setEditingItem] = useState(null)
+  const [pantry, setPantry] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [item, setItemName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [editingItem, setEditingItem] = useState(null);
 
   const updatePantry = async () => {
-    const snapshot = query(collection(firestore, 'pantry'))
-    const docs = await getDocs(snapshot)
-    const pantryList = []
+    const snapshot = query(collection(firestore, 'pantry'));
+    const docs = await getDocs(snapshot);
+    const pantryList = [];
     docs.forEach((doc) => {
       pantryList.push({
         name: doc.id,
         ...doc.data(),
-      })
-    })
-    setPantry(pantryList)
-  }
+      });
+    });
+    setPantry(pantryList);
+  };
 
   const addItem = async (item) => {
-    const docRef = doc(collection(firestore, 'pantry'), item)
-    const docSnap = await getDoc(docRef)
+    const docRef = doc(collection(firestore, 'pantry'), item);
+    const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const { quantity } = docSnap.data()
-      await setDoc(docRef, { quantity: quantity + 1 })
+      const { quantity } = docSnap.data();
+      await setDoc(docRef, { quantity: quantity + 1 });
+    } else {
+      await setDoc(docRef, { quantity: 1 });
     }
-    else {
-      await setDoc(docRef, { quantity: 1 })
-    }
-    await updatePantry()
-  }
+    await updatePantry();
+  };
 
   const updateItemQuantity = async () => {
-    const docRef = doc(collection(firestore, 'pantry'), editingItem)
-    const docSnap = await getDoc(docRef)
+    const docRef = doc(collection(firestore, 'pantry'), editingItem);
+    const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const newQuantity = parseInt(quantity)
+      const newQuantity = parseInt(quantity);
       if (newQuantity > 0) {
-        await setDoc(docRef, { quantity: newQuantity })
+        await setDoc(docRef, { quantity: newQuantity });
       } else {
-        alert('Quantity must be greater than 0')
+        alert('Quantity must be greater than 0');
       }
     }
-    setEditingItem(null)
-    setQuantity('')
-    handleClose()
-    await updatePantry()
-  }
+    setEditingItem(null);
+    setQuantity('');
+    handleClose();
+    await updatePantry();
+  };
 
   const removeItem = async (item) => {
-    const docRef = doc(collection(firestore, 'pantry'), item)
-    const docSnap = await getDoc(docRef)
+    const docRef = doc(collection(firestore, 'pantry'), item);
+    const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      const { quantity } = docSnap.data()
+      const { quantity } = docSnap.data();
       if (quantity === 1) {
-        await deleteDoc(docRef)
-      }
-      else {
-        await setDoc(docRef, { quantity: quantity - 1 })
+        await deleteDoc(docRef);
+      } else {
+        await setDoc(docRef, { quantity: quantity - 1 });
       }
     }
-    await updatePantry()
-  }
+    await updatePantry();
+  };
 
   useEffect(() => {
-    updatePantry()
-  }, [])
+    updatePantry();
+  }, []);
 
-  const handleOpen = () => setOpen(true)
+  const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setOpen(false)
-    setEditingItem(null)
-    setQuantity('')
-  }
+    setOpen(false);
+    setEditingItem(null);
+    setQuantity('');
+  };
 
   return (
     <Box
@@ -110,13 +109,13 @@ export default function Home() {
           Pantry Tracker
         </Typography>
         <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-        I created this Pantry Tracker app using Next.js, React, and Firebase to store the data. 
-        It's a simple and intuitive application designed to help you keep track of the items in your pantry. 
-        With this app, you can easily add new items, update their quantities, and remove items when they're no longer 
-        needed.
+          I created this Pantry Tracker app using Next.js, React, and Firebase to store the data. 
+          It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry. 
+          With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer 
+          needed.
         </Typography>
         <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-        Below is my Portfolio and linkedin, feel free to check and let's connect!
+          Below is my Portfolio and LinkedIn, feel free to check and let's connect!
         </Typography>
         <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
           <Link href="/" passHref>
@@ -176,12 +175,12 @@ export default function Home() {
               color="primary"
               onClick={() => {
                 if (editingItem) {
-                  updateItemQuantity()
+                  updateItemQuantity();
                 } else {
-                  addItem(item)
-                  setItemName('')
+                  addItem(item);
+                  setItemName('');
                 }
-                handleClose()
+                handleClose();
               }}
               sx={{ borderRadius: '8px' }}
             >
@@ -252,10 +251,10 @@ export default function Home() {
                   variant="contained"
                   color="secondary"
                   onClick={() => {
-                    setEditingItem(name)
-                    setItemName(name)
-                    setQuantity(quantity)
-                    handleOpen()
+                    setEditingItem(name);
+                    setItemName(name);
+                    setQuantity(quantity);
+                    handleOpen();
                   }}
                   sx={{ borderRadius: '8px' }}
                 >
