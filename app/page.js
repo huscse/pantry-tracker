@@ -5,6 +5,7 @@ import { firestore } from '@/firebase';
 import { Box, Button, Modal, Stack, TextField, Typography } from '@mui/material';
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function Home() {
   const [pantry, setPantry] = useState([]);
