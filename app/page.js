@@ -77,11 +77,7 @@ export default function Home() {
 
   const removeAllQuantities = async (item) => {
     const docRef = doc(collection(firestore, 'pantry'), item);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      await deleteDoc(docRef);
-    }
+    await deleteDoc(docRef);
     await updatePantry();
   };
 
@@ -213,14 +209,16 @@ export default function Home() {
       </Modal>
       <Analytics />
       <SpeedInsights />
-      <Box display="flex" justifyContent="center" alignItems="center" gap={2} mb={2}>
+      <Box display="flex" flexDirection="column" gap={2} mb={2} sx={{ width: '100%', maxWidth: '800px' }}>
         <Button
           variant="contained"
           color="primary"
           onClick={handleOpen}
           sx={{
             borderRadius: '12px',
-            mb: 2,
+            width: '100%',
+            maxWidth: '400px',
+            alignSelf: 'center',
             '&:hover': {
               backgroundColor: '#0288d1',
             },
@@ -234,7 +232,9 @@ export default function Home() {
           onClick={removeAllItems}
           sx={{
             borderRadius: '12px',
-            mb: 2,
+            width: '100%',
+            maxWidth: '400px',
+            alignSelf: 'center',
             '&:hover': {
               backgroundColor: '#d32f2f',
             },
@@ -253,7 +253,7 @@ export default function Home() {
         p={4}
         display="flex"
         flexDirection="column"
-        alignItems="center"
+        alignItems="stretch"
         sx={{ p: { xs: 2, md: 4 } }}
       >
         <Typography variant="h5" color="#333" align="center" sx={{ fontWeight: 'bold', mb: 2 }}>
@@ -266,8 +266,8 @@ export default function Home() {
               width="100%"
               minHeight="80px"
               display="flex"
-              alignItems="center"
-              justifyContent="space-between"
+              flexDirection="column"
+              alignItems="stretch"
               bgcolor="#f7f7f7"
               padding={2}
               borderRadius={4}
@@ -278,16 +278,17 @@ export default function Home() {
                   transform: 'scale(1.02)',
                   boxShadow: 4,
                 },
-                mb: { xs: 1, md: 2 },
               }}
             >
-              <Typography variant="h6" color="#333" flex={2}>
-                {name.charAt(0).toUpperCase() + name.slice(1)}
-              </Typography>
-              <Typography variant="h6" color="#333" flex={1} textAlign="center">
-                {quantity}
-              </Typography>
-              <Stack direction="row" spacing={1} flex={1} justifyContent="flex-end">
+              <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Typography variant="h6" color="#333">
+                  {name.charAt(0).toUpperCase() + name.slice(1)}
+                </Typography>
+                <Typography variant="h6" color="#333">
+                  Quantity: {quantity}
+                </Typography>
+              </Box>
+              <Box display="flex" flexDirection="column" mt={1} gap={1}>
                 <Button
                   variant="contained"
                   color="secondary"
@@ -307,7 +308,7 @@ export default function Home() {
                   onClick={() => removeItem(name)}
                   sx={{ borderRadius: '8px' }}
                 >
-                  Remove
+                  Remove One
                 </Button>
                 <Button
                   variant="contained"
@@ -317,7 +318,7 @@ export default function Home() {
                 >
                   Remove All Quantities
                 </Button>
-              </Stack>
+              </Box>
             </Box>
           ))}
         </Stack>
