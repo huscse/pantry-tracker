@@ -5,3 +5,22 @@
   padding: 0;
   margin: 0;
 }
+
+
+
+/* Ensure this applies to the whole page */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* app/globals.css */
+body {
+  background-image: url('/pantry_tracker/wp5019587.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+
