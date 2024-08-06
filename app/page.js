@@ -1,19 +1,106 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { firestore } from '@/firebase';
-import { Box, Button, Modal, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, Modal, Stack, TextField, Typography, AppBar, Toolbar, IconButton, Container, CssBaseline, ThemeProvider, Switch, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'firebase/firestore';
 import Link from 'next/link';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { firestore } from "@/firebase";
+
+import { createTheme } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
+
+export const getTheme = (mode) =>
+  createTheme({
+    palette: {
+      mode,
+      ...(mode === 'dark'
+        ? {
+            primary: {
+              main: '#90caf9',
+            },
+            background: {
+              default: '#121212',
+              paper: '#1d1d1d',
+            },
+            text: {
+              primary: '#ffffff',
+              secondary: grey[500],
+            },
+            buttons: {
+              home: '#ff5722', // Custom color for Home button
+              portfolio: '#4caf50', // Custom color for Portfolio button
+              linkedin: '#0e76a8', // Custom color for LinkedIn button
+            }
+          }
+        : {
+            primary: {
+              main: '#1976d2',
+            },
+            background: {
+              default: '#f5f5f5',
+              paper: '#ffffff',
+            },
+            text: {
+              primary: '#000000',
+              secondary: grey[700],
+            },
+            buttons: {
+              home: '#ff5722', // Custom color for Home button
+              portfolio: '#4caf50', // Custom color for Portfolio button
+              linkedin: '#0e76a8', // Custom color for LinkedIn button
+            }
+          }),
+    },
+    typography: {
+      fontFamily: 'Roboto, Arial, sans-serif',
+      button: {
+        textTransform: 'none',
+        fontWeight: 'bold',
+        fontSize: '1rem',
+      },
+    },
+    components: {
+      MuiButton: {
+        styleOverrides: {
+          root: ({ theme }) => ({
+            '&.home': {
+              color: theme.palette.buttons.home,
+            },
+            '&.portfolio': {
+              color: theme.palette.buttons.portfolio,
+            },
+            '&.linkedin': {
+              color: theme.palette.buttons.linkedin,
+            },
+          }),
+        },
+      },
+      MuiListItemText: {
+        styleOverrides: {
+          primary: {
+            fontFamily: 'Roboto, Arial, sans-serif',
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+          },
+        },
+      },
+    },
+  });
 
 export default function Home() {
   const [pantry, setPantry] = useState([]);
   const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [item, setItemName] = useState('');
   const [quantity, setQuantity] = useState('');
   const [editingItem, setEditingItem] = useState(null);
+  const [darkMode, setDarkMode] = useState(false); // State for dark mode
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const updatePantry = async () => {
     const snapshot = query(collection(firestore, 'pantry'));
@@ -100,241 +187,245 @@ export default function Home() {
     setQuantity('');
   };
 
+  const toggleDrawer = (open) => () => {
+    setDrawerOpen(open);
+  };
+
   return (
-    <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      alignItems="center"
-      sx={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: 2,
-      }}
-    >
-      <Box
-        width="100%"
-        maxWidth="800px"
-        bgcolor="#ffffff"
-        borderRadius="12px"
-        boxShadow={4}
-        p={4}
-        mb={4}
-        sx={{ mb: { xs: 2, md: 4 }, p: { xs: 2, md: 4 } }}
-      >
-        <Typography variant="h4" color="#333" align="center" sx={{ fontWeight: 'bold', mb: 2 }}>
-          Pantry Tracker
-        </Typography>
-        <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-          I created this Pantry Tracker app using Next.js, React, and Firebase to store the data.
-          It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry.
-          With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer 
-          needed.
-        </Typography>
-        <Typography variant="body1" color="#555" align="center" sx={{ mb: 3 }}>
-          Below is my Portfolio and LinkedIn, feel free to check and let&apos;s connect!
-        </Typography>
-        <Box display="flex" justifyContent="center" alignItems="center" gap={2}>
-          <Link href="/" passHref>
-            <Button variant="outlined" color="primary">Home</Button>
-          </Link>
-          <Link href="https://husnain-landingpage.vercel.app" passHref>
-            <Button variant="outlined" color="primary">Portfolio</Button>
-          </Link>
-          <Link href="https://www.linkedin.com/in/husnain-khaliq-5414b9277/" passHref>
-            <Button variant="outlined" color="primary">LinkedIn</Button>
-          </Link>
-        </Box>
-      </Box>
-
-      <Modal open={open} onClose={handleClose}>
-        <Box
-          position="absolute"
-          top="50%" left="50%"
-          width="90%"
-          maxWidth="500px"
-          bgcolor="white"
-          borderRadius="12px"
-          boxShadow={24}
-          p={4}
-          display="flex"
-          flexDirection="column"
-          gap={3}
-          sx={{
-            transform: "translate(-50%, -50%)",
-            backdropFilter: 'blur(8px)',
-          }}
-        >
-          <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-            {editingItem ? 'Update Quantity' : 'Add Item'}
-          </Typography>
-          <Stack width="100%" spacing={2}>
-            <TextField
-              value={item}
-              onChange={(e) => setItemName(e.target.value)}
-              label="Item Name"
-              variant="outlined"
-              fullWidth
-              disabled={!!editingItem}
-              sx={{ borderRadius: '8px' }}
-            />
-            <TextField
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              label="Quantity"
-              variant="outlined"
-              fullWidth
-              type="number"
-              sx={{ borderRadius: '8px' }}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                if (editingItem) {
-                  updateItemQuantity();
-                } else {
-                  addItem(item);
-                  setItemName('');
-                }
-                handleClose();
-              }}
-              sx={{ borderRadius: '8px' }}
-            >
-              {editingItem ? 'Update' : 'Add'}
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-      <Analytics />
-      <SpeedInsights />
-      <Box display="flex" flexDirection="column" gap={2} mb={2} sx={{ width: '100%', maxWidth: '800px' }}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleOpen}
-          sx={{
-            borderRadius: '12px',
-            width: '100%',
-            maxWidth: '400px',
-            alignSelf: 'center',
-            '&:hover': {
-              backgroundColor: '#0288d1',
-            },
-          }}
-        >
-          Add New Item
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={removeAllItems}
-          sx={{
-            borderRadius: '12px',
-            width: '100%',
-            maxWidth: '400px',
-            alignSelf: 'center',
-            '&:hover': {
-              backgroundColor: '#d32f2f',
-            },
-          }}
-        >
-          Remove All Items
-        </Button>
-      </Box>
-
-      <Box
-        width="100%"
-        maxWidth="800px"
-        bgcolor="#ffffff"
-        borderRadius="12px"
-        boxShadow={4}
-        p={4}
-        display="flex"
-        flexDirection="column"
-        alignItems="stretch"
-        sx={{ p: { xs: 2, md: 4 } }}
-      >
-        <Typography variant="h5" color="#333" align="center" sx={{ fontWeight: 'bold', mb: 2 }}>
-          Pantry Items
-        </Typography>
-        <Stack width="100%" spacing={2}>
-          {pantry.map(({ name, quantity }) => (
-            <Box
-              key={name}
-              width="100%"
-              minHeight="80px"
-              display="flex"
-              flexDirection="column"
-              alignItems="stretch"
-              bgcolor="#f7f7f7"
-              padding={2}
-              borderRadius={4}
-              boxShadow={2}
+    <ThemeProvider theme={getTheme(darkMode ? 'dark' : 'light')}>
+      <CssBaseline />
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" sx={{ mb: 4 }}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
               sx={{
-                transition: 'transform 0.3s, box-shadow 0.3s',
+                mr: 2,
+                fontSize: '2rem', // Make the icon bigger
+                color: 'white',
                 '&:hover': {
-                  transform: 'scale(1.02)',
-                  boxShadow: 4,
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                },
+              }}
+              onClick={toggleDrawer(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Drawer
+              anchor="left"
+              open={drawerOpen}
+              onClose={toggleDrawer(false)}
+              sx={{
+                '& .MuiDrawer-paper': {
+                  backgroundColor: theme.palette.background.default,
+                  color: theme.palette.text.primary,
+                  padding: theme.spacing(2),
                 },
               }}
             >
-              <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6" color="#333">
-                  {name.charAt(0).toUpperCase() + name.slice(1)}
+              <Box
+                sx={{ width: 250 }}
+                role="presentation"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+              >
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  Menu
                 </Typography>
-                <Typography variant="h6" color="#333">
-                  Quantity: {quantity}
-                </Typography>
+                <List>
+                  <Link href="/" passHref>
+                    <ListItem button component="a" sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}>
+                      <ListItemText primary="Home" primaryTypographyProps={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'Roboto, Arial, sans-serif', color: '#0e76a8' }} />
+                    </ListItem>
+                  </Link>
+                  <Link href="https://husnain-landingpage.vercel.app" passHref>
+                    <ListItem button component="a" sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}>
+                      <ListItemText primary="Portfolio" primaryTypographyProps={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'Roboto, Arial, sans-serif', color: '#0e76a8' }} />
+                    </ListItem>
+                  </Link>
+                  <Link href="https://www.linkedin.com/in/husnain-khaliq-5414b9277/" passHref>
+                    <ListItem button component="a" sx={{ '&:hover': { backgroundColor: theme.palette.action.hover } }}>
+                      <ListItemText primary="LinkedIn" primaryTypographyProps={{ fontSize: '1.2rem', fontWeight: 'bold', fontFamily: 'Roboto, Arial, sans-serif', color: '#0e76a8' }} />
+                    </ListItem>
+                  </Link>
+                </List>
               </Box>
-              <Box display="flex" flexDirection="column" mt={1} gap={1}>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => {
-                    setEditingItem(name);
-                    setItemName(name);
-                    setQuantity(quantity);
-                    handleOpen();
-                  }}
-                  sx={{ borderRadius: '8px' }}
-                >
-                  Edit
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => removeItem(name)}
-                  sx={{ borderRadius: '8px' }}
-                >
-                  Remove One
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={() => removeAllQuantities(name)}
-                  sx={{ borderRadius: '8px' }}
-                >
-                  Remove All Quantities
-                </Button>
-              </Box>
+            </Drawer>
+
+
+            {!isMobile && (
+              <>
+                <Link href="/" passHref>
+                  <Button sx={{ color: 'white' }}>Home</Button>
+                </Link>
+                <Link href="https://husnain-landingpage.vercel.app" passHref>
+                  <Button sx={{ color: 'white' }}>Portfolio</Button>
+                </Link>
+                <Link href="https://www.linkedin.com/in/husnain-khaliq-5414b9277/" passHref>
+                  <Button sx={{ color: 'white' }}>LinkedIn</Button>
+                </Link>
+              </>
+            )}
+            <Box sx={{ flexGrow: 1 }} />
+            <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
+          </Toolbar>
+        </AppBar>
+
+        <Container>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Typography variant="h4" align="center" sx={{ mb: 4 }}>
+              Pantry Tracker
+            </Typography>
+            <Typography variant="body1" align="center" sx={{ mb: 4 }}>
+              I created this Pantry Tracker app using Next.js, React, Material UI, and Firebase.
+              It's a simple and intuitive application designed to help you keep track of the items in your pantry.
+              You can easily add new items, update their quantities, and remove items when they're no longer 
+              needed.
+            </Typography>
+
+            <Box display="flex" gap={2} sx={{ mb: 4 }}>
+              <Button variant="contained" color="primary" onClick={handleOpen}>
+                Add New Item
+              </Button>
+              <Button variant="contained" color="error" onClick={removeAllItems}>
+                Remove All
+              </Button>
             </Box>
-          ))}
-        </Stack>
+
+            <Modal open={open} onClose={handleClose}>
+  <Box
+    sx={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '90%',
+      maxWidth: '500px',
+      bgcolor: 'background.paper',
+      p: 4,
+      borderRadius: '12px',
+      boxShadow: 24,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 3,
+      outline: 'none',
+    }}
+  >
+    <Typography variant="h6">
+      {editingItem ? 'Update Quantity' : 'Add Item'}
+    </Typography>
+    <Stack spacing={2}>
+      <TextField
+        value={item}
+        onChange={(e) => setItemName(e.target.value)}
+        label="Item Name"
+        variant="outlined"
+        fullWidth
+        disabled={!!editingItem}
+      />
+      <TextField
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+        label="Quantity"
+        variant="outlined"
+        fullWidth
+        type="number"
+        inputProps={{ min: "1" }} // Ensure input allows only positive numbers
+      />
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={() => {
+          if (editingItem) {
+            if (parseInt(quantity) > 0) {
+              updateItemQuantity();
+            } else {
+              alert('Quantity must be greater than 0');
+            }
+          } else {
+            if (parseInt(quantity) > 0) {
+              addItem(item);
+              setItemName('');
+            } else {
+              alert('Quantity must be greater than 0');
+            }
+          }
+          handleClose();
+        }}
+        disabled={parseInt(quantity) <= 0} // Disable button if quantity is not valid
+      >
+        {editingItem ? 'Update' : 'Add'}
+      </Button>
+    </Stack>
+  </Box>
+</Modal>
+
+
+
+            <Box width="100%" maxWidth="800px" mt={4}>
+              <Typography variant="h5" align="center" sx={{ mb: 2 }}>
+                Pantry Items
+              </Typography>
+              <Stack spacing={2}>
+                {pantry.map(({ name, quantity }) => (
+                  <Box
+                    key={name}
+                    p={2}
+                    bgcolor="background.paper"
+                    borderRadius={4}
+                    boxShadow={2}
+                    display="flex"
+                    flexDirection="column"
+                    gap={2}
+                  >
+                    <Box display="flex" justifyContent="space-between" alignItems="center">
+                      <Typography variant="h6">
+                        {name.charAt(0).toUpperCase() + name.slice(1)}
+                      </Typography>
+                      <Typography variant="h6">
+                        Quantity: {quantity}
+                      </Typography>
+                    </Box>
+                    <Box display="flex" gap={2}>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => {
+                          setEditingItem(name);
+                          setItemName(name);
+                          setQuantity(quantity);
+                          handleOpen();
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => removeItem(name)}
+                      >
+                        Remove
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => removeAllQuantities(name)}
+                      >
+                        Remove All
+                      </Button>
+                    </Box>
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          </Box>
+        </Container>
+
+        <Analytics />
+        <SpeedInsights />
       </Box>
-    </Box>
+    </ThemeProvider>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
