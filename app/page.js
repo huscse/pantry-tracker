@@ -294,8 +294,8 @@ export default function Home() {
   sx={{
     mb: 4,
     fontFamily: 'Lora, serif',
-    fontSize: '1.6rem',
-    color: 'rgba(255, 255, 255, 0.5)', // Slightly less opaque for better readability
+    fontSize: '1.8rem',
+    color: 'rgba(255, 255, 255, 50)', // Slightly less opaque for better readability
     textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)', // Adds a subtle shadow to improve contrast
   }}
 >
