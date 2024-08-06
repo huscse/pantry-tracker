@@ -7,6 +7,7 @@ import { collection, deleteDoc, doc, getDoc, getDocs, query, setDoc } from 'fire
 import Link from 'next/link';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+
 import { firestore } from "@/firebase";
 
 import { createTheme } from '@mui/material/styles';
@@ -279,11 +280,8 @@ export default function Home() {
               Pantry Tracker
             </Typography>
             <Typography variant="body1" align="center" sx={{ mb: 4 }}>
-              I created this Pantry Tracker app using Next.js, React, Material UI, and Firebase.
-              It's a simple and intuitive application designed to help you keep track of the items in your pantry.
-              You can easily add new items, update their quantities, and remove items when they're no longer 
-              needed.
-            </Typography>
+  It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry. With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer needed.
+</Typography>
 
             <Box display="flex" gap={2} sx={{ mb: 4 }}>
               <Button variant="contained" color="primary" onClick={handleOpen}>
