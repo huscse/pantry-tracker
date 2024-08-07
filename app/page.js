@@ -9,6 +9,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { firestore } from "@/firebase";
 import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2478160158830105"
+     crossorigin="anonymous"></script>
 
 export const getTheme = (mode) =>
   createTheme({
@@ -90,7 +92,6 @@ export const getTheme = (mode) =>
       },
     },
   });
-
 
 export default function Home() {
   const [pantry, setPantry] = useState([]);
@@ -289,22 +290,18 @@ export default function Home() {
               Pantry Tracker
             </Typography>
             <Typography
-  variant="body1"
-  align="center"
-  sx={{
+            variant="body1"
+            align="center"
+            sx={{
     mb: 4,
     fontFamily: 'Lora, serif',
     fontSize: '1.8rem',
     color: 'rgba(255, 255, 255, 50)', // Slightly less opaque for better readability
     textShadow: '1px 1px 3px rgba(0, 0, 0, 0.5)', // Adds a subtle shadow to improve contrast
   }}
->
-  It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry. With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer needed.
-</Typography>
-
-
-
-
+           >
+           It&apos;s a simple and intuitive application designed to help you keep track of the items in your pantry. With this app, you can easily add new items, update their quantities, and remove items when they&apos;re no longer needed.
+           </Typography>
             <Box display="flex" gap={2} sx={{ mb: 4 }}>
               <Button variant="contained" color="primary" onClick={handleOpen}>
                 Add New Item
@@ -313,7 +310,6 @@ export default function Home() {
                 Remove All
               </Button>
             </Box>
-
             <Modal open={open} onClose={handleClose}>
               <Box
                 sx={{
@@ -381,7 +377,6 @@ export default function Home() {
                 </Stack>
               </Box>
             </Modal>
-
             <Box width="100%" maxWidth="800px" mt={4}>
               <Typography variant="h5" align="center" sx={{ mb: 2 }}>
                 Pantry Items
@@ -440,7 +435,6 @@ export default function Home() {
             </Box>
           </Box>
         </Container>
-
         <Analytics />
         <SpeedInsights />
       </Box>
