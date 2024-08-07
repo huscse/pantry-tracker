@@ -9,8 +9,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { firestore } from "@/firebase";
 import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2478160158830105"
-     crossorigin="anonymous"></script>
+
 
 export const getTheme = (mode) =>
   createTheme({
